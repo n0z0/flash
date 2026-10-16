@@ -1,9 +1,12 @@
-# Dependencies
-.psci_modules
-.spago
-bower_components
-node_modules
+# Ignore large binaries and firmware zips (>100MB rejected by GitHub)
+*.zip
+*.tar.gz
+*.exe
+*.img
+*.apk
+*.msi
+*.bin
 
-# Generated files
-.psci
-output
+# Temporary folders
+usb_driver/
+repartition_tool/
