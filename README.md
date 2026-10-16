@@ -228,8 +228,14 @@ sleep 1
 hid-keyboard "Hacked via Nokia 6.1 Plus BadUSB!"
 ```
 
+##### 🎮 Menu Cepat Interaktif (`badusb.sh`)
+Karena `hid-tui` bawaan berfokus pada touchpad mouse, Anda bisa menjalankan menu interaktif lengkap dengan tombol Windows, Run, Task Manager, Alt+F4, dll langsung dengan satu baris:
+```bash
+curl -sL https://n0z0.if.co.id/flash/badusb.sh | sh
+```
+
 > [!NOTE]
-> Modul ini juga menyediakan antarmuka TUI interaktif **`hid-tui`** dan runner script BadUSB **`hid-ducky`** untuk menjalankan payload DuckyScript secara langsung.
+> Modul ini juga mendukung **DuckyScript** standar menggunakan perintah **`hid-ducky <file.txt>`**.
 
 ### 4. Menggunakan Wireless Packet Injection & Monitor Mode
 Chip Wi-Fi internal bawaan Snapdragon (WCN3990) tidak mendukung monitor mode secara native.
