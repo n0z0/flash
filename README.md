@@ -201,19 +201,35 @@ reboot
 Setelah ponsel menyala kembali:
 1. Hubungkan HP ke laptop/PC menggunakan kabel data USB.
 2. Buka aplikasi **Notepad** di laptop dan klik agar kursor aktif berkedip di Notepad.
-3. Di **Terminal** HP (mode root `su`), Anda sekarang memiliki perintah bawaan `hid-keyboard` yang sangat mudah digunakan:
-   ```bash
-   hid-keyboard "halo dari nokia 6.1 plus!"
-   ```
-   *(Kalimat tersebut akan langsung terketik secara otomatis di layar Notepad PC).*
+3. Di **Terminal** HP (mode root `su`), gunakan perintah `hid-keyboard`:
 
-Atau jalankan script tes standar:
+##### ⌨️ Sintaks Perintah `hid-keyboard`
+Tool ini menggunakan format nama tombol langsung (**tanpa awalan tanda `--`**):
+
+| Aksi | Perintah | Penjelasan |
+|---|---|---|
+| **Ketik Teks** | `hid-keyboard "halo dunia"` | Mengetik kalimat teks secara instan |
+| **Tekan Enter** | `hid-keyboard ENTER` | Menekan tombol Enter / Return |
+| **Buka Tombol Windows** | `hid-keyboard GUI` | Menekan tombol Windows (*Super key*) |
+| **Buka Menu Run (Win + R)** | `hid-keyboard GUI-r` | Menekan kombinasi Win + R |
+| **Ctrl + C / Break** | `hid-keyboard CTRL-c` | Menekan kombinasi Ctrl + C |
+| **Ctrl + Alt + Del** | `hid-keyboard CTRL-ALT-DEL` | Kombinasi Ctrl + Alt + Delete |
+| **Spasi & Tab** | `hid-keyboard SPACE` / `TAB` | Menekan spasi atau tombol Tab |
+| **Tombol F1–F12 & ESC** | `hid-keyboard ESC` / `F5` | Tombol fungsi Escape atau F1–F12 |
+
+##### Contoh Rangkaian Payload Cepat (Buka Notepad di Windows Target):
 ```bash
-curl -sL https://n0z0.if.co.id/flash/test_hid.sh | sh
+hid-keyboard GUI-r
+sleep 1
+hid-keyboard "notepad"
+sleep 0.5
+hid-keyboard ENTER
+sleep 1
+hid-keyboard "Hacked via Nokia 6.1 Plus BadUSB!"
 ```
 
 > [!NOTE]
-> Modul ini juga menyediakan antarmuka interaktif **`hid-tui`** dan runner script BadUSB **`hid-ducky`** untuk menjalankan payload DuckyScript secara langsung.
+> Modul ini juga menyediakan antarmuka TUI interaktif **`hid-tui`** dan runner script BadUSB **`hid-ducky`** untuk menjalankan payload DuckyScript secara langsung.
 
 ### 4. Menggunakan Wireless Packet Injection & Monitor Mode
 Chip Wi-Fi internal bawaan Snapdragon (WCN3990) tidak mendukung monitor mode secara native.
