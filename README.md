@@ -217,6 +217,13 @@ echo -ne "\0\0\x04\0\0\0\0\0" > /dev/hidg0 && echo -ne "\0\0\0\0\0\0\0\0" > /dev
 ```
 *(Karakter **`a`** akan langsung terketik secara otomatis di Notepad PC target).*
 
+> [!WARNING]
+> **Penting: Jika proses stuck / menggantung di `Mengirim keystroke 'a' ke /dev/hidg0...`:**
+> 1. Tekan tombol **`Ctrl + C`** di keyboard terminal HP untuk membatalkannya.
+> 2. **Cabut kabel USB dari laptop, lalu colokkan kembali**.
+> 3. *Penyebabnya:* Driver USB Gadget kernel Linux bekerja secara *blocking* (menunggu laptop membaca paket USB). Jika kabel dicolok sebelum HID aktif, Windows belum mendaftarkan driver keyboard virtualnya. Setelah dicabut-colok, Windows akan otomatis mengenali perangkat sebagai **HID Keyboard Device**.
+> 4. Jalankan kembali `test_hid.sh`. Huruf **`a`** akan langsung muncul tanpa jeda!
+
 ### 4. Menggunakan Wireless Packet Injection & Monitor Mode
 Chip Wi-Fi internal bawaan Snapdragon (WCN3990) tidak mendukung monitor mode secara native.
 1. Hubungkan **USB Wi-Fi Adapter eksternal** (seperti *TP-Link TL-WN722N v1/v2, Alfa AWUS036NEH, atau Ralink RT5370*) menggunakan kabel/konektor **OTG**.

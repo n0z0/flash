@@ -19,6 +19,7 @@ if [ ! -e /dev/hidg0 ]; then
     exit 1
 fi
 
+echo "[*] Tips: Jika perintah ini menggantung (stuck), cukup cabut dan colok kembali kabel USB ke PC agar PC mendeteksi USB Keyboard baru."
 echo "[+] Mengirim keystroke 'a' ke /dev/hidg0..."
 # Tekan tombol 'a' (Keycode 0x04)
 printf '\x00\x00\x04\x00\x00\x00\x00\x00' > /dev/hidg0
