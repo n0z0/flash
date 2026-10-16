@@ -180,14 +180,9 @@ fastboot --set-active=b
 1. Buka **Settings** -> **System** -> **Developer options** -> aktifkan **Local terminal**.
 2. Buka aplikasi **Terminal** di HP, ketik `su` lalu tekan Enter.
 3. Pada pop-up Magisk yang muncul, pilih **GRANT (Izinkan)**. Tanda shell akan berubah menjadi `#`.
-
-### 3. Menguji USB Gadget HID (BadUSB Keystroke Attack)
+### 3. Mengaktifkan & Menguji USB Gadget HID (BadUSB)
 Kernel ini mengekspos node USB HID di `/dev/hidg0` (keyboard) dan `/dev/hidg1` (mouse).
 
-Untuk menguji pengiriman tombol keyboard ke PC target:
-1. Hubungkan HP ke laptop/PC dengan kabel data USB.
-2. Buka aplikasi **Notepad** di laptop (pastikan kursor aktif di Notepad).
-### 3. Mengaktifkan & Menguji USB Gadget HID (BadUSB)
 Pada Android 11 (LineageOS 18.1), *framework* USB dan SELinux mengontrol jalur USB secara ketat. Agar fungsi USB Gadget HID aktif secara stabil, permanen, dan didukung aturan SELinux yang valid, metode terbaik adalah menggunakan **Magisk HID Gadget Module**.
 
 #### Langkah 3a: Pasang Modul Magisk HID Gadget (One-Liner di HP)
