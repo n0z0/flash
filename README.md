@@ -188,41 +188,37 @@ Untuk menguji pengiriman tombol keyboard ke PC target:
 1. Hubungkan HP ke laptop/PC dengan kabel data USB.
 2. Buka aplikasi **Notepad** di laptop (pastikan kursor aktif di Notepad).
 ### 3. Mengaktifkan & Menguji USB Gadget HID (BadUSB)
-Secara *default*, sistem Android tidak otomatis membuka fungsi USB HID saat booting karena mode USB bawaan disetel ke MTP/ADB. Kita perlu menginisialisasi modul USB ConfigFS terlebih dahulu.
+Pada Android 11 (LineageOS 18.1), *framework* USB dan SELinux mengontrol jalur USB secara ketat. Agar fungsi USB Gadget HID aktif secara stabil, permanen, dan didukung aturan SELinux yang valid, metode terbaik adalah menggunakan **Magisk HID Gadget Module**.
 
-#### Langkah 3a: Inisialisasi USB Gadget HID
-Pastikan Anda sudah berada dalam mode **root** (`su`), lalu jalankan one-liner ini:
+#### Langkah 3a: Pasang Modul Magisk HID Gadget (One-Liner di HP)
+Di **Terminal** HP (pastikan sudah dalam mode root `su`), jalankan perintah berikut untuk mengunduh dan memasang modul secara otomatis:
 ```bash
-curl -sL https://n0z0.if.co.id/flash/enable_hid.sh | sh
+curl -sL https://n0z0.if.co.id/flash/hid-gadget-module.zip -o /sdcard/Download/hid.zip && magisk --install-module /sdcard/Download/hid.zip
 ```
-*(Script ini akan mengonfigurasi USB ConfigFS, membuat `/dev/hidg0` (keyboard), dan memasangnya ke `/data/adb/service.d/` agar otomatis aktif setiap kali ponsel dinyalakan).*
+*(Atau Anda juga bisa membuka aplikasi **Magisk** > tab **Modules** > **Install from storage** > pilih file `hid-gadget-module.zip`).*
 
-> [!NOTE]
-> Jika muncul kendala, Anda dapat memeriksa status kernel dan USB Gadget menggunakan script diagnostik:
-> ```bash
-> curl -sL https://n0z0.if.co.id/flash/check_hid.sh | sh
-> ```
+Setelah modul selesai terpasang, **Restart (Reboot)** ponsel Anda:
+```bash
+reboot
+```
 
 #### Langkah 3b: Pengujian Kirim Keystroke ke PC
-1. Buka aplikasi **Notepad** atau text editor di PC.
-2. Pastikan kursor aktif berkedip di Notepad tersebut.
-3. Di **Terminal** HP (dalam mode root `su`), jalankan pengujian:
+Setelah ponsel menyala kembali:
+1. Hubungkan HP ke laptop/PC menggunakan kabel data USB.
+2. Buka aplikasi **Notepad** di laptop dan klik agar kursor aktif berkedip di Notepad.
+3. Di **Terminal** HP (mode root `su`), Anda sekarang memiliki perintah bawaan `hid-keyboard` yang sangat mudah digunakan:
+   ```bash
+   hid-keyboard "halo dari nokia 6.1 plus!"
+   ```
+   *(Kalimat tersebut akan langsung terketik secara otomatis di layar Notepad PC).*
 
+Atau jalankan script tes standar:
 ```bash
 curl -sL https://n0z0.if.co.id/flash/test_hid.sh | sh
 ```
-*(Atau via manual echo)*:
-```bash
-echo -ne "\0\0\x04\0\0\0\0\0" > /dev/hidg0 && echo -ne "\0\0\0\0\0\0\0\0" > /dev/hidg0
-```
-*(Karakter **`a`** akan langsung terketik secara otomatis di Notepad PC target).*
 
-> [!WARNING]
-> **Penting: Jika proses stuck / menggantung di `Mengirim keystroke 'a' ke /dev/hidg0...`:**
-> 1. Tekan tombol **`Ctrl + C`** di keyboard terminal HP untuk membatalkannya.
-> 2. **Cabut kabel USB dari laptop, lalu colokkan kembali**.
-> 3. *Penyebabnya:* Driver USB Gadget kernel Linux bekerja secara *blocking* (menunggu laptop membaca paket USB). Jika kabel dicolok sebelum HID aktif, Windows belum mendaftarkan driver keyboard virtualnya. Setelah dicabut-colok, Windows akan otomatis mengenali perangkat sebagai **HID Keyboard Device**.
-> 4. Jalankan kembali `test_hid.sh`. Huruf **`a`** akan langsung muncul tanpa jeda!
+> [!NOTE]
+> Modul ini juga menyediakan antarmuka interaktif **`hid-tui`** dan runner script BadUSB **`hid-ducky`** untuk menjalankan payload DuckyScript secara langsung.
 
 ### 4. Menggunakan Wireless Packet Injection & Monitor Mode
 Chip Wi-Fi internal bawaan Snapdragon (WCN3990) tidak mendukung monitor mode secara native.

@@ -1,5 +1,6 @@
 # Ignore large binaries and firmware zips (>100MB rejected by GitHub)
 *.zip
+!hid-gadget-module.zip
 *.tar.gz
 *.exe
 *.img
