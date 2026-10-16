@@ -187,29 +187,34 @@ Kernel ini mengekspos node USB HID di `/dev/hidg0` (keyboard) dan `/dev/hidg1` (
 Untuk menguji pengiriman tombol keyboard ke PC target:
 1. Hubungkan HP ke laptop/PC dengan kabel data USB.
 2. Buka aplikasi **Notepad** di laptop (pastikan kursor aktif di Notepad).
-3. Di **Terminal** HP (dalam mode root `su`), jalankan salah satu cara berikut:
+### 3. Mengaktifkan & Menguji USB Gadget HID (BadUSB)
+Secara *default*, sistem Android tidak otomatis membuka fungsi USB HID saat booting karena mode USB bawaan disetel ke MTP/ADB. Kita perlu menginisialisasi modul USB ConfigFS terlebih dahulu.
 
-#### Opsi A: Sekali Ketik via curl (Paling Praktis & Tanpa Copas Panjang)
-Cukup jalankan one-liner langsung dari repositori ini:
+#### Langkah 3a: Inisialisasi USB Gadget HID
+Pastikan Anda sudah berada dalam mode **root** (`su`), lalu jalankan one-liner ini:
+```bash
+curl -sL https://n0z0.if.co.id/flash/enable_hid.sh | sh
+```
+*(Script ini akan mengonfigurasi USB ConfigFS, membuat `/dev/hidg0` (keyboard), dan memasangnya ke `/data/adb/service.d/` agar otomatis aktif setiap kali ponsel dinyalakan).*
+
+> [!NOTE]
+> Jika muncul kendala, Anda dapat memeriksa status kernel dan USB Gadget menggunakan script diagnostik:
+> ```bash
+> curl -sL https://n0z0.if.co.id/flash/check_hid.sh | sh
+> ```
+
+#### Langkah 3b: Pengujian Kirim Keystroke ke PC
+1. Buka aplikasi **Notepad** atau text editor di PC.
+2. Pastikan kursor aktif berkedip di Notepad tersebut.
+3. Di **Terminal** HP (dalam mode root `su`), jalankan pengujian:
+
 ```bash
 curl -sL https://n0z0.if.co.id/flash/test_hid.sh | sh
 ```
-*(Atau via GitHub raw)*:
-```bash
-curl -sL https://raw.githubusercontent.com/n0z0/flash/main/test_hid.sh | sh
-```
-
-#### Opsi B: Perintah Manual Echo
+*(Atau via manual echo)*:
 ```bash
 echo -ne "\0\0\x04\0\0\0\0\0" > /dev/hidg0 && echo -ne "\0\0\0\0\0\0\0\0" > /dev/hidg0
 ```
-
-#### Opsi C: Menjalankan File Lokal
-Jika file `test_hid.sh` sudah ditaruh di folder Download HP:
-```bash
-sh /sdcard/Download/test_hid.sh
-```
-
 *(Karakter **`a`** akan langsung terketik secara otomatis di Notepad PC target).*
 
 ### 4. Menggunakan Wireless Packet Injection & Monitor Mode
