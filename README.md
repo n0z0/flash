@@ -186,17 +186,31 @@ Kernel ini mengekspos node USB HID di `/dev/hidg0` (keyboard) dan `/dev/hidg1` (
 
 Untuk menguji pengiriman tombol keyboard ke PC target:
 1. Hubungkan HP ke laptop/PC dengan kabel data USB.
-2. Buka aplikasi **Notepad** di laptop.
-3. Di Terminal HP (mode root `#`), jalankan:
-   ```bash
-   echo -ne "\0\0\x04\0\0\0\0\0" > /dev/hidg0 && echo -ne "\0\0\0\0\0\0\0\0" > /dev/hidg0
-   ```
-   *(Karakter **`a`** akan langsung terketik secara otomatis di Notepad PC target).*
+2. Buka aplikasi **Notepad** di laptop (pastikan kursor aktif di Notepad).
+3. Di **Terminal** HP (dalam mode root `su`), jalankan salah satu cara berikut:
 
-Atau jalankan file helper script:
+#### Opsi A: Sekali Ketik via curl (Paling Praktis & Tanpa Copas Panjang)
+Cukup jalankan one-liner langsung dari repositori ini:
+```bash
+curl -sL https://n0z0.if.co.id/flash/test_hid.sh | sh
+```
+*(Atau via GitHub raw)*:
+```bash
+curl -sL https://raw.githubusercontent.com/n0z0/flash/main/test_hid.sh | sh
+```
+
+#### Opsi B: Perintah Manual Echo
+```bash
+echo -ne "\0\0\x04\0\0\0\0\0" > /dev/hidg0 && echo -ne "\0\0\0\0\0\0\0\0" > /dev/hidg0
+```
+
+#### Opsi C: Menjalankan File Lokal
+Jika file `test_hid.sh` sudah ditaruh di folder Download HP:
 ```bash
 sh /sdcard/Download/test_hid.sh
 ```
+
+*(Karakter **`a`** akan langsung terketik secara otomatis di Notepad PC target).*
 
 ### 4. Menggunakan Wireless Packet Injection & Monitor Mode
 Chip Wi-Fi internal bawaan Snapdragon (WCN3990) tidak mendukung monitor mode secara native.
