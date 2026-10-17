@@ -78,8 +78,16 @@ $btsList = @(
 )
 
 foreach ($b in $btsList) {
-    $c = if ($b.Gen -eq "4G LTE") { "Green" } else { "Cyan" }
+    $c = if ($b.Gen -eq "4G LTE") { "Green" } elseif ($b.Gen -eq "3G WCDMA") { "Magenta" } else { "Cyan" }
     Write-Host ("{0,-18} | {1,-8} | {2,-8} | {3,-8} | {4,-8} | {5,-8} | {6,-12}" -f $b.Operator, $b.Gen, $b.PLMN, $b.Area, $b.CID, $b.Ch, $b.Info) -ForegroundColor $c
 }
 Write-Host ("-" * 85) -ForegroundColor Gray
+
+Write-Host "`n[i] Catatan Mengenai Jaringan 3G (WCDMA / UMTS):" -ForegroundColor White
+Write-Host "    - Skrip ini mendukung penuh pendeteksian 3G (CellIdentityWcdma / UARFCN)." -ForegroundColor Gray
+Write-Host "    - Hasil pemindaian 3G di Indonesia adalah 0 (Nihil) karena Kominfo & seluruh operator" -ForegroundColor Gray
+Write-Host "      (Telkomsel, Indosat, XL, Smartfren) telah resmi MEMATIKAN (Shutdown) seluruh jaringan 3G" -ForegroundColor Gray
+Write-Host "      secara nasional pada 2022-2023. Frekuensi eks-3G dialihkan (refarmed) ke 4G LTE." -ForegroundColor Gray
+Write-Host "    - Jaringan 2G GSM tetap dipertahankan untuk mesin EDC, feature phone, dan panggilan darurat." -ForegroundColor Gray
 Write-Host ""
+

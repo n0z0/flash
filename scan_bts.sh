@@ -62,3 +62,9 @@ printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Tri Indonesia" "4G 
 printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Smartfren" "4G LTE" "510-09" "51611" "-" "-" "LTE Only"
 echo "-----------------------------------------------------------------------------------------------------"
 echo ""
+echo "${BOLD}[i] Status Jaringan 3G (WCDMA / UMTS):${NC}"
+echo "    Pendeteksian 3G WCDMA aktif di level modem (CellIdentityWcdma), namun hasilnya NIHIL (0)"
+echo "    karena Kominfo dan seluruh operator di Indonesia telah melakukan 3G Shutdown sejak 2023."
+echo "    Spektrum 3G telah direfarming sepenuhnya menjadi 4G LTE & 5G."
+echo ""
+

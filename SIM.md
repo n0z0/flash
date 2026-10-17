@@ -165,7 +165,15 @@ Saat pertama kali ponsel dinyalakan, pemancar terdekat dengan daya penerimaan te
 | **Tri (IOH)** | **4G LTE** | `510-89` | `43041` | PCI `319` | EARFCN `1625` | **Band 3 (IOH MOCN RAN)** |
 | **Smartfren** | **4G LTE** | `510-09` | `51611` | - | - | Band 5 / Band 40 (LTE Only) |
 
-### B. Menjalankan Tool Diagnostik Mandiri
+### B. Mengapa Tidak Ada BTS 3G (WCDMA / UMTS) yang Muncul?
+Tool diagnostik ini dirancang untuk mendeteksi seluruh spektrum seluler: **2G (GSM), 3G (WCDMA/HSPA), dan 4G (LTE)**. Namun, hasil pemindaian BTS 3G di Indonesia adalah **Nihil (0)** karena:
+1. **Kebijakan Resmi 3G Sunset (Shutdown) Nasional:** Kementerian Kominfo RI bersama seluruh operator seluler (Telkomsel, Indosat Ooredoo Hutchison, XL Axiata, Smartfren) telah **mematikan secara permanen seluruh pemancar sinyal 3G di Indonesia** sejak akhir 2022 hingga pertengahan 2023.
+2. **Refarming Frekuensi:** Seluruh alokasi frekuensi eks-3G (Band 1 2100 MHz dan Band 8 900 MHz) dialihkan sepenuhnya untuk memperkuat kapasitas 4G LTE dan deployment 5G.
+3. **Mengapa 2G GSM Masih Hidup?:** Jaringan 2G GSM sengaja tetap dipertahankan oleh operator untuk melayani jutaan perangkat IoT/M2M (seperti mesin EDC perbankan, GPS tracker kendaraan), HP jadul (*feature phone*), serta sebagai jalur sambungan panggilan darurat (*emergency calls*).
+4. **Dukungan Tool:** Mesin parser tool (`scan_bts.ps1` & `scan_bts.sh`) tetap menyertakan pembacaan objek 3G (`CellIdentityWcdma` dan `UARFCN`). Jika perangkat dibawa ke luar negeri yang masih mengoperasikan jaringan 3G, BTS 3G akan otomatis terdeteksi dan tercantum.
+
+### C. Menjalankan Tool Diagnostik Mandiri
+
 
 Telah disediakan script diagnosa otomatis di repositori ini:
 
