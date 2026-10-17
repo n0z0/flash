@@ -237,15 +237,14 @@ Saat pengujian slot ganda diisi dengan:
 - **Slot 1 (phoneId=0):** Kartu Telkomsel (`MCC=510, MNC=10`, ICCID: `8962100012320003004`)
 - **Slot 2 (phoneId=1):** Kartu XL Axiata (`MCC=510, MNC=11`, ICCID: `8962115937155243627`)
 
-### Temuan Diagnostik:
-1. **Status Fisik SIM (Modem):**
-   * Kedua kartu berstatus `[gsm.sim.state]: [LOADED, LOADED]` (koneksi kuningan fisik normal).
-2. **Hasil Registrasi Jaringan Operator:**
-   * **Slot 1 (Telkomsel):** Ditolak oleh jaringan dengan **`rejectCause = 15`** (`No Suitable Cells in Tracking Area`). Ini adalah penolakan dari sistem otorisasi HLR Telkomsel karena kartu unprovisioned / hangus / tidak ada paket langganan aktif.
-   * **Slot 2 (XL Axiata):** Ditolak keras oleh jaringan dengan **`rejectCause = 6`** (`Illegal ME - Mobile Equipment`).
-3. **Efek Visual di Android:**
-   * Muncul notifikasi resmi Android: **`Phone Services: SIM 2 not allowed`** dengan ikon tanda seru segitiga (*MM Reject*).
-   * Status bar menampilkan tanda silang pada kedua ikon sinyal (`4x 4x`).
-   * Paket data internet: **Mati Total / Tidak Aktif** (`mDataRegState = 1 (OUT_OF_SERVICE)`, `DEFAULT_DATA_UNSELECTED`).
+### Temuan Diagnostik Setelah Penukaran Slot (Cross-Test):
+1. **Perpindahan Notifikasi Sistem:**
+   * Saat kartu XL di Slot 2: Muncul notifikasi `Phone Services: SIM 2 not allowed` (`rejectCause = 6`).
+   * Saat kartu XL dipindahkan ke Slot 1: Notifikasi otomatis berpindah menjadi **`Phone Services: SIM 1 not allowed`** (`rejectCause = 6`).
+2. **Kesimpulan Mutlak (Root Cause):**
+   * **Kedua IMEI fisik Nokia ini (IMEI 1: `353384090120438` dan IMEI 2: `353384090620437`) terdaftar dalam daftar cekal CEIR Kemenperin / Bea Cukai (Blacklist Perangkat Impor TA-1099).**
+   * Operator XL menerapkan pengecekan CEIR secara disiplin. Ketika kartu XL dimasukkan ke slot mana pun di ponsel ini, server EIR XL mendeteksi IMEI Nokia tidak terdaftar, lalu mengembalikan sinyal penolakan **3GPP Reject Cause 6 (Illegal ME - Mobile Equipment)**.
+   * Kartu SIM pengguna terbukti 100% normal dan aktif di HP lain karena IMEI HP lain tersebut resmi terdaftar di Kemenperin.
+
 
 
