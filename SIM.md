@@ -228,3 +228,24 @@ adb push scan_bts.sh /data/local/tmp/
 adb shell "su -c 'sh /data/local/tmp/scan_bts.sh'"
 ```
 
+---
+
+## 8. Studi Kasus Riil Diagnostik: Pengujian Dual SIM (Telkomsel & XL Axiata)
+
+### Log Diagnostik Nyata (17 Oktober 2026):
+Saat pengujian slot ganda diisi dengan:
+- **Slot 1 (phoneId=0):** Kartu Telkomsel (`MCC=510, MNC=10`, ICCID: `8962100012320003004`)
+- **Slot 2 (phoneId=1):** Kartu XL Axiata (`MCC=510, MNC=11`, ICCID: `8962115937155243627`)
+
+### Temuan Diagnostik:
+1. **Status Fisik SIM (Modem):**
+   * Kedua kartu berstatus `[gsm.sim.state]: [LOADED, LOADED]` (koneksi kuningan fisik normal).
+2. **Hasil Registrasi Jaringan Operator:**
+   * **Slot 1 (Telkomsel):** Ditolak oleh jaringan dengan **`rejectCause = 15`** (`No Suitable Cells in Tracking Area`). Ini adalah penolakan dari sistem otorisasi HLR Telkomsel karena kartu unprovisioned / hangus / tidak ada paket langganan aktif.
+   * **Slot 2 (XL Axiata):** Ditolak keras oleh jaringan dengan **`rejectCause = 6`** (`Illegal ME - Mobile Equipment`).
+3. **Efek Visual di Android:**
+   * Muncul notifikasi resmi Android: **`Phone Services: SIM 2 not allowed`** dengan ikon tanda seru segitiga (*MM Reject*).
+   * Status bar menampilkan tanda silang pada kedua ikon sinyal (`4x 4x`).
+   * Paket data internet: **Mati Total / Tidak Aktif** (`mDataRegState = 1 (OUT_OF_SERVICE)`, `DEFAULT_DATA_UNSELECTED`).
+
+
