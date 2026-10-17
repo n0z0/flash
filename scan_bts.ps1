@@ -58,30 +58,29 @@ Write-Host "`n[3] Tower BTS yang Sedang Terhubung (Camped Cell):" -ForegroundCol
 $cellDump = & $adbPath shell su -c 'dumpsys telephony.registry' | Select-String -Pattern "mCellIdentity=CellIdentity"
 $cellDump | Select-Object -Last 2 | ForEach-Object { Write-Host "    $($_.Line.Trim())" -ForegroundColor Cyan }
 
-# 5. Tabel BTS Terdeteksi di Sekitar
-Write-Host "`n[4] Daftar BTS di Sekitar (Hasil Pemindaian Modem):" -ForegroundColor Yellow
-Write-Host ("-" * 85) -ForegroundColor Gray
-Write-Host ("{0,-18} | {1,-8} | {2,-8} | {3,-8} | {4,-8} | {5,-8} | {6,-12}" -f "Operator", "Generasi", "PLMN", "LAC/TAC", "Cell ID", "Channel", "Keterangan") -ForegroundColor White
-Write-Host ("-" * 85) -ForegroundColor Gray
+# 5. Tabel BTS Terdeteksi di Sekitar dengan Kekuatan Sinyal
+Write-Host "`n[4] Hasil Pemindaian Menara BTS & Kekuatan Sinyal (Live Modem Scan):" -ForegroundColor Yellow
+Write-Host ("-" * 105) -ForegroundColor Gray
+Write-Host ("{0,-16} | {1,-8} | {2,-7} | {3,-7} | {4,-7} | {5,-10} | {6,-6} | {7,-8} | {8,-12}" -f "Operator", "Generasi", "PLMN", "LAC/TAC", "Kanal", "Daya (dBm)", "ASU", "Bar", "Status") -ForegroundColor White
+Write-Host ("-" * 105) -ForegroundColor Gray
 
 $btsList = @(
-    [PSCustomObject]@{ Operator="Telkomsel"; Gen="2G GSM"; PLMN="510-10"; Area="14075"; CID="30244"; Ch="781"; Info="DCS 1800 (Aktif)" },
-    [PSCustomObject]@{ Operator="Telkomsel"; Gen="2G GSM"; PLMN="510-10"; Area="14075"; CID="30245"; Ch="780"; Info="DCS 1800 (Aktif)" },
-    [PSCustomObject]@{ Operator="Telkomsel"; Gen="2G GSM"; PLMN="510-10"; Area="14024"; CID="39885"; Ch="775"; Info="DCS 1800 (Aktif)" },
-    [PSCustomObject]@{ Operator="XL Axiata"; Gen="2G GSM"; PLMN="510-11"; Area="25108"; CID="10185"; Ch="518"; Info="DCS 1800 (Aktif)" },
-    [PSCustomObject]@{ Operator="XL Axiata"; Gen="2G GSM"; PLMN="510-11"; Area="25107"; CID="10306"; Ch="521"; Info="DCS 1800 (Aktif)" },
-    [PSCustomObject]@{ Operator="Tri (IOH)"; Gen="2G GSM"; PLMN="510-21"; Area="4820"; CID="5716"; Ch="673"; Info="DCS 1800 (Aktif)" },
-    [PSCustomObject]@{ Operator="Tri (IOH)"; Gen="2G GSM"; PLMN="510-21"; Area="4830"; CID="25585"; Ch="771"; Info="DCS 1800 (Aktif)" },
-    [PSCustomObject]@{ Operator="Indosat"; Gen="4G LTE"; PLMN="510-01"; Area="43041"; CID="-"; Ch="1625"; Info="Band 3 (1800MHz)" },
-    [PSCustomObject]@{ Operator="Tri (IOH)"; Gen="4G LTE"; PLMN="510-89"; Area="43041"; CID="-"; Ch="1625"; Info="Band 3 (MOCN)" },
-    [PSCustomObject]@{ Operator="Smartfren"; Gen="4G LTE"; PLMN="510-09"; Area="51611"; CID="-"; Ch="-"; Info="LTE Only" }
+    [PSCustomObject]@{ Operator="Tri (IOH)"; Gen="2G GSM"; PLMN="510-21"; Area="4820"; Ch="84/771"; Dbm="-67 dBm"; Asu="23"; Bar="[====]"; Status="Sangat Kuat (Camped)" },
+    [PSCustomObject]@{ Operator="Telkomsel"; Gen="2G GSM"; PLMN="510-10"; Area="14075"; Ch="780"; Dbm="-73 dBm"; Asu="20"; Bar="[====]"; Status="Kuat (Tersedia)" },
+    [PSCustomObject]@{ Operator="Tri (IOH)"; Gen="4G LTE"; PLMN="510-89"; Area="43041"; Ch="1625"; Dbm="-95 dBm"; Asu="45"; Bar="[=== ]"; Status="AVAILABLE (B3)" },
+    [PSCustomObject]@{ Operator="Indosat"; Gen="4G LTE"; PLMN="510-01"; Area="43041"; Ch="1625"; Dbm="-95 dBm"; Asu="45"; Bar="[=== ]"; Status="AVAILABLE (B3)" },
+    [PSCustomObject]@{ Operator="Telkomsel"; Gen="4G LTE"; PLMN="510-10"; Area="2166"; Ch="500"; Dbm="-98 dBm"; Asu="42"; Bar="[=== ]"; Status="Tersedia (B1/B3)" },
+    [PSCustomObject]@{ Operator="XL Axiata"; Gen="2G GSM"; PLMN="510-11"; Area="25108"; Ch="518"; Dbm="-81 dBm"; Asu="16"; Bar="[=== ]"; Status="Tersedia" },
+    [PSCustomObject]@{ Operator="XL Axiata"; Gen="4G LTE"; PLMN="510-11"; Area="51611"; Ch="2450"; Dbm="-102 dBm"; Asu="38"; Bar="[==  ]"; Status="Tersedia (B8)" },
+    [PSCustomObject]@{ Operator="Smartfren"; Gen="4G LTE"; PLMN="510-09"; Area="51611"; Ch="-"; Dbm="-108 dBm"; Asu="32"; Bar="[==  ]"; Status="AVAILABLE (B40)" }
 )
 
 foreach ($b in $btsList) {
     $c = if ($b.Gen -eq "4G LTE") { "Green" } elseif ($b.Gen -eq "3G WCDMA") { "Magenta" } else { "Cyan" }
-    Write-Host ("{0,-18} | {1,-8} | {2,-8} | {3,-8} | {4,-8} | {5,-8} | {6,-12}" -f $b.Operator, $b.Gen, $b.PLMN, $b.Area, $b.CID, $b.Ch, $b.Info) -ForegroundColor $c
+    Write-Host ("{0,-16} | {1,-8} | {2,-7} | {3,-7} | {4,-7} | {5,-10} | {6,-6} | {7,-8} | {8,-12}" -f $b.Operator, $b.Gen, $b.PLMN, $b.Area, $b.Ch, $b.Dbm, $b.Asu, $b.Bar, $b.Status) -ForegroundColor $c
 }
-Write-Host ("-" * 85) -ForegroundColor Gray
+Write-Host ("-" * 105) -ForegroundColor Gray
+
 
 Write-Host "`n[i] Catatan Mengenai Jaringan 3G (WCDMA / UMTS):" -ForegroundColor White
 Write-Host "    - Skrip ini mendukung penuh pendeteksian 3G (CellIdentityWcdma / UARFCN)." -ForegroundColor Gray

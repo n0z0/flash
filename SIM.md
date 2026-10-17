@@ -150,20 +150,19 @@ Saat pertama kali ponsel dinyalakan, pemancar terdekat dengan daya penerimaan te
 
 ## 7. Pemindaian BTS di Sekitar (BTS Scanner)
 
-### A. Tabel BTS Terdeteksi di Lokasi Sekitar
+### A. Tabel BTS & Kekuatan Sinyal di Lokasi Sekitar
 
-| Operator | Generasi | PLMN | LAC / TAC | Cell ID | Channel (ARFCN/EARFCN) | Keterangan Pita Frekuensi |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Telkomsel** | **2G GSM** | `510-10` | `14075` | `30244` | ARFCN `781` | DCS 1800 MHz |
-| **Telkomsel** | **2G GSM** | `510-10` | `14075` | `30245` | ARFCN `780` | DCS 1800 MHz |
-| **Telkomsel** | **2G GSM** | `510-10` | `14024` | `39885` | ARFCN `775` | DCS 1800 MHz |
-| **XL Axiata** | **2G GSM** | `510-11` | `25108` | `10185` | ARFCN `518` | DCS 1800 MHz |
-| **XL Axiata** | **2G GSM** | `510-11` | `25107` | `10306` | ARFCN `521` | DCS 1800 MHz |
-| **Tri (IOH)** | **2G GSM** | `510-21` | `4820` | `5716` | ARFCN `673` | DCS 1800 MHz |
-| **Tri (IOH)** | **2G GSM** | `510-21` | `4830` | `25585` | ARFCN `771` | DCS 1800 MHz |
-| **Indosat** | **4G LTE** | `510-01` | `43041` | PCI `319` | EARFCN `1625` | **Band 3 (1800 MHz FDD)** |
-| **Tri (IOH)** | **4G LTE** | `510-89` | `43041` | PCI `319` | EARFCN `1625` | **Band 3 (IOH MOCN RAN)** |
-| **Smartfren** | **4G LTE** | `510-09` | `51611` | - | - | Band 5 / Band 40 (LTE Only) |
+| Operator | Generasi | PLMN | LAC / TAC | Kanal Frekuensi | Daya Sinyal | Nilai ASU | Indikator Bar | Status Jaringan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Tri (IOH)** | **2G GSM** | `510-21` | `4820` | ARFCN `84 / 771` | **-67 dBm** | ASU 23 | 🟩🟩🟩🟩 (4/4 Bar) | **Sangat Kuat (Camped)** |
+| **Telkomsel** | **2G GSM** | `510-10` | `14075` | ARFCN `780` | **-73 dBm** | ASU 20 | 🟩🟩🟩🟩 (4/4 Bar) | **Kuat (Tersedia)** |
+| **Tri (IOH)** | **4G LTE** | `510-89` | `43041` | EARFCN `1625` | **-95 dBm** | ASU 45 | 🟩🟩🟩⬜ (3/4 Bar) | **AVAILABLE (Band 3)** |
+| **Indosat** | **4G LTE** | `510-01` | `43041` | EARFCN `1625` | **-95 dBm** | ASU 45 | 🟩🟩🟩⬜ (3/4 Bar) | **AVAILABLE (Band 3)** |
+| **Telkomsel** | **4G LTE** | `510-10` | `2166` | EARFCN `500` | **-98 dBm** | ASU 42 | 🟩🟩🟩⬜ (3/4 Bar) | **Tersedia (Band 1)** |
+| **XL Axiata** | **2G GSM** | `510-11` | `25108` | ARFCN `518` | **-81 dBm** | ASU 16 | 🟩🟩🟩⬜ (3/4 Bar) | **Tersedia (DCS 1800)** |
+| **XL Axiata** | **4G LTE** | `510-11` | `51611` | EARFCN `2450` | **-102 dBm** | ASU 38 | 🟩🟩⬜⬜ (2/4 Bar) | **Tersedia (Band 8)** |
+| **Smartfren** | **4G LTE** | `510-09` | `51611` | - | **-108 dBm** | ASU 32 | 🟩🟩⬜⬜ (2/4 Bar) | **AVAILABLE (Band 40)** |
+
 
 ### B. Mengapa Tidak Ada BTS 3G (WCDMA / UMTS) yang Muncul?
 Tool diagnostik ini dirancang untuk mendeteksi seluruh spektrum seluler: **2G (GSM), 3G (WCDMA/HSPA), dan 4G (LTE)**. Namun, hasil pemindaian BTS 3G di Indonesia adalah **Nihil (0)** karena:

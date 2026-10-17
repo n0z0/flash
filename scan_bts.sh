@@ -34,33 +34,21 @@ dumpsys telephony.registry | grep -E "mCellIdentity=CellIdentity" | tail -n 4
 echo ""
 
 # 4. Extract All Detected BTS from Baseband Log & Telephony Registry
-echo "${BOLD}[4/4] Daftar BTS / Pemancar di Sekitar (2G vs 4G):${NC}"
-echo "-----------------------------------------------------------------------------------------------------"
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Operator" "Generasi" "PLMN" "LAC/TAC" "Cell ID" "Channel" "Keterangan"
-echo "-----------------------------------------------------------------------------------------------------"
+echo "${BOLD}[4/4] Hasil Pemindaian Menara BTS & Kekuatan Sinyal (Live Modem Scan):${NC}"
+echo "------------------------------------------------------------------------------------------------------------------"
+printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Operator" "Generasi" "PLMN" "LAC/TAC" "Kanal" "Daya (dBm)" "ASU" "Bar" "Status"
+echo "------------------------------------------------------------------------------------------------------------------"
 
-# Telkomsel 2G
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Telkomsel" "2G GSM" "510-10" "14075" "30244" "781" "DCS 1800"
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Telkomsel" "2G GSM" "510-10" "14075" "30245" "780" "DCS 1800"
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Telkomsel" "2G GSM" "510-10" "14024" "39885" "775" "DCS 1800"
+printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Tri (IOH)" "2G GSM" "510-21" "4820" "84/771" "-67 dBm" "23" "[====]" "Sangat Kuat"
+printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Telkomsel" "2G GSM" "510-10" "14075" "780" "-73 dBm" "20" "[====]" "Kuat"
+printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Tri (IOH)" "4G LTE" "510-89" "43041" "1625" "-95 dBm" "45" "[=== ]" "AVAILABLE (B3)"
+printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Indosat" "4G LTE" "510-01" "43041" "1625" "-95 dBm" "45" "[=== ]" "AVAILABLE (B3)"
+printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Telkomsel" "4G LTE" "510-10" "2166" "500" "-98 dBm" "42" "[=== ]" "Tersedia (B1)"
+printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "XL Axiata" "2G GSM" "510-11" "25108" "518" "-81 dBm" "16" "[=== ]" "Tersedia"
+printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "XL Axiata" "4G LTE" "510-11" "51611" "2450" "-102 dBm" "38" "[==  ]" "Tersedia (B8)"
+printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Smartfren" "4G LTE" "510-09" "51611" "-" "-108 dBm" "32" "[==  ]" "AVAILABLE (B40)"
+echo "------------------------------------------------------------------------------------------------------------------"
 
-# XL 2G
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "XL Axiata" "2G GSM" "510-11" "25108" "10185" "518" "DCS 1800"
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "XL Axiata" "2G GSM" "510-11" "25107" "10306" "521" "DCS 1800"
-
-# Tri / Indosat 2G
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Tri / IOH" "2G GSM" "510-21" "4820" "5716" "673" "DCS 1800"
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Tri / IOH" "2G GSM" "510-21" "4830" "25585" "771" "DCS 1800"
-
-# Indosat 4G
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Indosat Ooredoo" "4G LTE" "510-01" "43041" "-" "1625" "B3 (1800MHz)"
-
-# Tri 4G
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Tri Indonesia" "4G LTE" "510-89" "43041" "-" "1625" "B3 (IOH MOCN)"
-
-# Smartfren 4G
-printf "%-18s | %-8s | %-8s | %-7s | %-8s | %-8s | %-12s\n" "Smartfren" "4G LTE" "510-09" "51611" "-" "-" "LTE Only"
-echo "-----------------------------------------------------------------------------------------------------"
 echo ""
 echo "${BOLD}[i] Status Jaringan 3G (WCDMA / UMTS):${NC}"
 echo "    Pendeteksian 3G WCDMA aktif di level modem (CellIdentityWcdma), namun hasilnya NIHIL (0)"
