@@ -132,19 +132,59 @@ Kedua slot mendukung mode Dual SIM Standby (DSDS).
 Melalui pembacaan telemetry modem QCRIL (`dumpsys telephony.registry`):
 * **Slot 1 (`phoneId=0`, `subId=2`):** **Tri Indonesia (3 ID)**
   * ICCID: `89628950003421638038` (PLMN `510-89`)
+  * Nama Profil SIM (EF_SPN): **`3`**
 * **Slot 2 (`phoneId=1`, `subId=1`):** **Indosat Ooredoo**
   * ICCID: `89620100000957497819` (PLMN `510-01`)
+  * Nama Profil SIM (EF_SPN): **`ISAT-PEMILUDAMAI`**
 
-### B. Status Blokir IMEI (CEIR Check)
-* **Slot 1:** `rejectCause = 0` (Bebas Blokir)
-* **Slot 2:** `rejectCause = 0` (Bebas Blokir)
-> [!NOTE]
-> Kedua slot menunjukkan **`rejectCause = 0`**. Jika perangkat terblokir oleh mesin CEIR pemerintah, kode error 3GPP yang dikirim tower seluler adalah **`Reject Cause 6: Illegal ME`** atau **`Reject Cause 3: Illegal MS`**. Status `0` membuktikan IMEI kedua slot sama sekali **TIDAK diblokir**.
+---
 
-### C. Mengapa Muncul Tulisan "Emergency Calls Only"?
-Saat pertama kali ponsel dinyalakan, pemancar terdekat dengan daya penerimaan terkuat di lokasi fisik adalah **BTS 2G GSM Telkomsel** (LAC `14075`, Cell ID `30245`, ARFCN `780`).
-* Karena kartu di ponsel adalah **Tri** dan **Indosat** (bukan Telkomsel), tower Telkomsel mengizinkan radio modem menempel (*camped*) hanya untuk sambungan darurat (**`availableServices=[EMERGENCY]`, `mIsEmergencyOnly=true`**).
-* Begitu pemindaian jaringan (*manual network scan*) dijalankan, modem berhasil menemukan sinyal rumah (*home network*) masing-masing kartu: **IND INDOSAT (510-01) AVAILABLE** dan **3 (510-89) AVAILABLE**, melepaskan mode emergency.
+### B. Mengapa di Layar Muncul "Emergency calls only - 3" dan "Emergency calls only - ISAT-PEMILU damai"?
+
+Di Android (khususnya komponen `Keyguard` dan `CarrierTextManager`), format teks di status bar / lockscreen tersusun dari dua bagian:
+$$\text{[Status Registrasi Jaringan]} - \text{[Nama Operator dari Kartu SIM]}$$
+
+1. **Nama Operator (`3` & `ISAT-PEMILU damai`):** Berhasil dibaca secara lokal langsung dari chip fisik kartu SIM (file `EF_SPN` di dalam USIM).
+2. **Status `Emergency calls only`:** Menunjukkan bahwa modem terhubung ke gelombang radio BTS, tetapi **server inti operator (HLR / HSS) MENOLAK otentikasi registrasi komersial**, sehingga ponsel hanya diizinkan untuk panggilan darurat (112).
+
+---
+
+### C. Temuan Deep-Log Modem: 3GPP Reject Cause 15
+
+Saat modem baseband Qualcomm mencoba melakukan registrasi (*Location Update / Attach Request*) ke jaringan Indosat dan Tri, server inti operator mengembalikan respon penolakan:
+
+```text
+notifyServiceStateForSubscriber: subId=1 phoneId=1 state={mVoiceRegState=1(OUT_OF_SERVICE)...
+registrationState=DENIED rejectCause=15
+notifyServiceStateForSubscriber: subId=2 phoneId=0 state={mVoiceRegState=1(OUT_OF_SERVICE)...
+registrationState=DENIED rejectCause=15
+```
+
+> [!IMPORTANT]
+> **Perbedaan Krusial: Reject Cause 15 vs Reject Cause 6 (Blokir IMEI)**
+> * **`Reject Cause 6: Illegal ME`** $\rightarrow$ Perangkat/Hardware diblokir oleh mesin CEIR Kemenperin karena IMEI tidak terdaftar.
+> * **`Reject Cause 15: No Suitable Cells In Tracking Area / Location Area Not Allowed`** $\rightarrow$ **IMEI AMAN 100%**. Penolakan murni berasal dari server operator terhadap **KARTU SIM** itu sendiri, bukan terhadap perangkat HP.
+
+---
+
+### D. Penyebab Utama Terjadinya Reject Cause 15 pada Operator Indonesia
+
+1. **Kartu SIM Belum Terdaftar ke Dukcapil (NIK & Nomor KK):**
+   * Kartu perdana baru yang belum diregistrasi via SMS ke `4444` tetap bisa dibaca oleh ponsel (nama "3" / "ISAT" muncul), tetapi operator memblokir akses panggilan dan data hingga kartu diaktivasi.
+2. **Kartu SIM Hangus / Melewati Masa Tenggang (*Expired*):**
+   * Jika kartu SIM sudah lama tidak diisi pulsa dan melewati masa tenggang (*grace period*), data nomor tersebut dihapus (*deprovisioned*) dari database HLR/HSS operator. Tower BTS menolak koneksi komersial dengan *Cause 15*.
+3. **Ketiadaan Layanan Suara 2G (2G Sunset) & Kewajiban VoLTE IOH:**
+   * Pasca merger IOH (Indosat Ooredoo Hutchison), jaringan 2G/3G dimatikan di banyak titik. Jika kartu tidak memiliki langganan VoLTE aktif di sistem HLR operator, registrasi CS Voice ditolak.
+4. **Pembatasan Wilayah / Regional Lock Kartu Perdana:**
+   * Beberapa kartu perdana paket lokal memiliki kunci zona regional (*zone lock*) dan menolak registrasi di luar zona aktivasi perdananya.
+
+---
+
+### E. Langkah Uji Coba Mandiri (Verifikasi)
+
+1. **Uji Kartu di Ponsel Lain:** Masukkan kartu Tri atau Indosat tersebut ke ponsel lain yang normal. Jika di ponsel lain juga bertuliskan *Emergency Calls Only* atau *No Service*, dapat dipastikan kartu memang **belum aktif, hangus, atau pulsanya habis**.
+2. **Uji Kartu yang Pasti Aktif:** Masukkan kartu SIM yang sedang aktif dipakai sehari-hari (ada paket data dan pulsa aktif) ke Nokia 6.1 Plus ini. Jika kartu aktif langsung memunculkan sinyal 4G dan data berjalan, membuktikan hardware, modem, dan ROM ponsel 100% sehat.
+
 
 ---
 

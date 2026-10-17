@@ -32,26 +32,39 @@ Write-Host "`n[1] Informasi Kartu SIM Terpasang:" -ForegroundColor Yellow
 $simDump = & $adbPath shell su -c 'dumpsys telephony.registry' | Select-String -Pattern "mCardId|mIccId|mSimState"
 $simDump | Select-Object -First 6 | ForEach-Object { Write-Host "    $($_.Line.Trim())" -ForegroundColor Gray }
 
-# 3. Cek Status Registrasi & Reject Cause (CEIR Blacklist Check)
-Write-Host "`n[2] Status Registrasi & Cek Blokir IMEI (Reject Cause):" -ForegroundColor Yellow
-$regDump = & $adbPath shell su -c 'dumpsys telephony.registry' | Select-String -Pattern "rejectCause"
-$isBlocked = $false
+# 3. Cek Status Registrasi & Reject Cause (CEIR Blacklist & Operator Provisioning Check)
+Write-Host "`n[2] Status Registrasi Jaringan & Analisis Reject Cause:" -ForegroundColor Yellow
+$regDump = & $adbPath shell su -c 'dumpsys telephony.registry' | Select-String -Pattern "rejectCause="
+$cause6 = $false
+$cause15 = $false
+$cause0 = $false
+
 foreach ($line in ($regDump | Select-Object -Last 4)) {
     $t = $line.Line.Trim()
     if ($t -match "rejectCause=6") {
         Write-Host "    $t" -ForegroundColor Red
-        $isBlocked = $true
+        $cause6 = $true
+    } elseif ($t -match "rejectCause=15") {
+        Write-Host "    $t" -ForegroundColor Yellow
+        $cause15 = $true
     } elseif ($t -match "rejectCause=0") {
         Write-Host "    $t" -ForegroundColor Green
+        $cause0 = $true
     } else {
         Write-Host "    $t" -ForegroundColor White
     }
 }
-if ($isBlocked) {
-    Write-Host "    [!] PERINGATAN: Terdeteksi Reject Cause 6 (IMEI Terblokir CEIR/Kemenperin)!" -ForegroundColor Red
-} else {
-    Write-Host "    [OK] IMEI AMAN (Reject Cause = 0, Tidak ada pemblokiran CEIR/Kemenperin)" -ForegroundColor Green
+
+if ($cause6) {
+    Write-Host "    [!] BAHAYA: Reject Cause 6 (IMEI Terblokir CEIR / Kemenperin)!" -ForegroundColor Red
+} elseif ($cause15) {
+    Write-Host "    [!] TEMUAN: Terdeteksi 3GPP Reject Cause 15 (No Suitable Cells / Location Area Not Allowed)" -ForegroundColor Yellow
+    Write-Host "        -> IMEI AMAN (Bukan blokir HP/CEIR)." -ForegroundColor Green
+    Write-Host "        -> Penolakan berasal dari HLR/HSS Operator terhadap KARTU SIM (Kartu Hangus, Belum Registrasi NIK/KK, atau Masa Tenggang Habis)." -ForegroundColor Cyan
+} elseif ($cause0) {
+    Write-Host "    [OK] IMEI AMAN & Bebas Blokir (Reject Cause = 0)" -ForegroundColor Green
 }
+
 
 # 4. Serving Cell Saat Ini
 Write-Host "`n[3] Tower BTS yang Sedang Terhubung (Camped Cell):" -ForegroundColor Yellow
