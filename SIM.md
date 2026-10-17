@@ -123,3 +123,61 @@ Kedua slot mendukung mode Dual SIM Standby (DSDS).
 | **Bea Cukai** (`beacukai.go.id`) | **Hanya HP bawaan penumpang dari luar negeri** yang didaftarkan di bandara/pelabuhan. | HP resmi lokal (TAM/Erajaya) dan HP lama (sebelum 15 Sept 2020) **pasti berstatus "IMEI Tidak Ditemukan"**. Ini normal. |
 | **Kemenperin** (`imei.kemenperin.go.id`) | HP resmi yang diproduksi/diimpor distributor berizin di Indonesia. | Sering mengalami maintenance database. |
 | **CEIR (Pusat Operator)** | Database operasional aktif seluruh operator di Indonesia. | Validasi nyata langsung terlihat saat SIM dimasukkan: jika tower mengunci sinyal (`rejectCause = 0`), berarti **IMEI 100% aman dan tidak diblokir**. |
+
+---
+
+## 6. Analisis Kasus Nyata: Dual SIM (Tri & Indosat) & "Emergency Calls Only"
+
+### A. Kartu SIM yang Terdeteksi
+Melalui pembacaan telemetry modem QCRIL (`dumpsys telephony.registry`):
+* **Slot 1 (`phoneId=0`, `subId=2`):** **Tri Indonesia (3 ID)**
+  * ICCID: `89628950003421638038` (PLMN `510-89`)
+* **Slot 2 (`phoneId=1`, `subId=1`):** **Indosat Ooredoo**
+  * ICCID: `89620100000957497819` (PLMN `510-01`)
+
+### B. Status Blokir IMEI (CEIR Check)
+* **Slot 1:** `rejectCause = 0` (Bebas Blokir)
+* **Slot 2:** `rejectCause = 0` (Bebas Blokir)
+> [!NOTE]
+> Kedua slot menunjukkan **`rejectCause = 0`**. Jika perangkat terblokir oleh mesin CEIR pemerintah, kode error 3GPP yang dikirim tower seluler adalah **`Reject Cause 6: Illegal ME`** atau **`Reject Cause 3: Illegal MS`**. Status `0` membuktikan IMEI kedua slot sama sekali **TIDAK diblokir**.
+
+### C. Mengapa Muncul Tulisan "Emergency Calls Only"?
+Saat pertama kali ponsel dinyalakan, pemancar terdekat dengan daya penerimaan terkuat di lokasi fisik adalah **BTS 2G GSM Telkomsel** (LAC `14075`, Cell ID `30245`, ARFCN `780`).
+* Karena kartu di ponsel adalah **Tri** dan **Indosat** (bukan Telkomsel), tower Telkomsel mengizinkan radio modem menempel (*camped*) hanya untuk sambungan darurat (**`availableServices=[EMERGENCY]`, `mIsEmergencyOnly=true`**).
+* Begitu pemindaian jaringan (*manual network scan*) dijalankan, modem berhasil menemukan sinyal rumah (*home network*) masing-masing kartu: **IND INDOSAT (510-01) AVAILABLE** dan **3 (510-89) AVAILABLE**, melepaskan mode emergency.
+
+---
+
+## 7. Pemindaian BTS di Sekitar (BTS Scanner)
+
+### A. Tabel BTS Terdeteksi di Lokasi Sekitar
+
+| Operator | Generasi | PLMN | LAC / TAC | Cell ID | Channel (ARFCN/EARFCN) | Keterangan Pita Frekuensi |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Telkomsel** | **2G GSM** | `510-10` | `14075` | `30244` | ARFCN `781` | DCS 1800 MHz |
+| **Telkomsel** | **2G GSM** | `510-10` | `14075` | `30245` | ARFCN `780` | DCS 1800 MHz |
+| **Telkomsel** | **2G GSM** | `510-10` | `14024` | `39885` | ARFCN `775` | DCS 1800 MHz |
+| **XL Axiata** | **2G GSM** | `510-11` | `25108` | `10185` | ARFCN `518` | DCS 1800 MHz |
+| **XL Axiata** | **2G GSM** | `510-11` | `25107` | `10306` | ARFCN `521` | DCS 1800 MHz |
+| **Tri (IOH)** | **2G GSM** | `510-21` | `4820` | `5716` | ARFCN `673` | DCS 1800 MHz |
+| **Tri (IOH)** | **2G GSM** | `510-21` | `4830` | `25585` | ARFCN `771` | DCS 1800 MHz |
+| **Indosat** | **4G LTE** | `510-01` | `43041` | PCI `319` | EARFCN `1625` | **Band 3 (1800 MHz FDD)** |
+| **Tri (IOH)** | **4G LTE** | `510-89` | `43041` | PCI `319` | EARFCN `1625` | **Band 3 (IOH MOCN RAN)** |
+| **Smartfren** | **4G LTE** | `510-09` | `51611` | - | - | Band 5 / Band 40 (LTE Only) |
+
+### B. Menjalankan Tool Diagnostik Mandiri
+
+Telah disediakan script diagnosa otomatis di repositori ini:
+
+#### 1. Dari Komputer Windows (PowerShell)
+```powershell
+.\scan_bts.ps1
+```
+Skrip ini akan otomatis mendeteksi ponsel, membaca identitas SIM di kedua slot, mengecek status blacklist IMEI (`rejectCause`), menampilkan tower BTS yang sedang terhubung, dan mencetak tabel frekuensi BTS di sekitar.
+
+#### 2. Langsung dari Ponsel / ADB Shell (Linux/Android)
+```bash
+adb push scan_bts.sh /data/local/tmp/
+adb shell "su -c 'sh /data/local/tmp/scan_bts.sh'"
+```
+
