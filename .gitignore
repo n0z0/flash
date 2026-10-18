@@ -8,6 +8,8 @@
 *.msi
 *.bin
 
-# Temporary folders
+# Temporary folders & captures
 usb_driver/
 repartition_tool/
+*.png
+*.xml

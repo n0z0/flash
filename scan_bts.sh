@@ -34,19 +34,13 @@ dumpsys telephony.registry | grep -E "mCellIdentity=CellIdentity" | tail -n 4
 echo ""
 
 # 4. Extract All Detected BTS from Baseband Log & Telephony Registry
-echo "${BOLD}[4/4] Hasil Pemindaian Menara BTS & Kekuatan Sinyal (Live Modem Scan):${NC}"
+echo "${BOLD}[4/4] Menara BTS Terdeteksi Secara Riil (Modem Baseband Registry):${NC}"
 echo "------------------------------------------------------------------------------------------------------------------"
-printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Operator" "Generasi" "PLMN" "LAC/TAC" "Kanal" "Daya (dBm)" "ASU" "Bar" "Status"
+printf "%-16s | %-8s | %-12s | %-10s | %-10s\n" "Operator/PLMN" "Teknologi" "LAC/TAC" "Cell ID" "Kanal (ARFCN)"
 echo "------------------------------------------------------------------------------------------------------------------"
-
-printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Tri (IOH)" "2G GSM" "510-21" "4820" "84/771" "-67 dBm" "23" "[====]" "Sangat Kuat"
-printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Telkomsel" "2G GSM" "510-10" "14075" "780" "-73 dBm" "20" "[====]" "Kuat"
-printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Tri (IOH)" "4G LTE" "510-89" "43041" "1625" "-95 dBm" "45" "[=== ]" "AVAILABLE (B3)"
-printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Indosat" "4G LTE" "510-01" "43041" "1625" "-95 dBm" "45" "[=== ]" "AVAILABLE (B3)"
-printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Telkomsel" "4G LTE" "510-10" "2166" "500" "-98 dBm" "42" "[=== ]" "Tersedia (B1)"
-printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "XL Axiata" "2G GSM" "510-11" "25108" "518" "-81 dBm" "16" "[=== ]" "Tersedia"
-printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "XL Axiata" "4G LTE" "510-11" "51611" "2450" "-102 dBm" "38" "[==  ]" "Tersedia (B8)"
-printf "%-16s | %-8s | %-7s | %-7s | %-7s | %-10s | %-6s | %-8s | %-12s\n" "Smartfren" "4G LTE" "510-09" "51611" "-" "-108 dBm" "32" "[==  ]" "AVAILABLE (B40)"
+dumpsys telephony.registry | grep -oE "CellIdentity(Gsm|Lte|Wcdma):\{[^}]+\}" | grep -v "2147483647" | sort -u | while read -r line; do
+    echo "$line"
+done
 echo "------------------------------------------------------------------------------------------------------------------"
 
 echo ""
