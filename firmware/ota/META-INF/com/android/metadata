@@ -1,0 +1,9 @@
+ota-property-files=payload_metadata.bin:8763:96244,payload.bin:8763:1365959250,payload_properties.txt:1365968071:155,care_map.pb:573:667,compatibility.zip:1293:7423,metadata:69:457
+ota-required-cache=0
+ota-type=AB
+post-build-incremental=00WW_4_10C
+post-sdk-level=29
+post-security-patch-level=2019-12-01
+post-timestamp=1576041692
+post-build=Nokia/Dragon_00WW/DRG_sprout:10/QKQ1.190828.002/00WW_4_10C:user/release-keys
+pre-device=DRG_sprout
